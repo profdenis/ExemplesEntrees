@@ -69,10 +69,13 @@ fun TextLengthCounter(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FruitSelector(modifier: Modifier = Modifier) {
-    val fruits = listOf("Pomme", "Banane", "Orange", "Fraise", "Kiwi")
+fun FruitSelector(
+    modifier: Modifier = Modifier,
+    fruits: List<String>,
+    selectedFruit: String,
+    onFruitSelected: (String) -> Unit = {}
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedFruit by remember { mutableStateOf("") }
 
     Column(modifier = modifier.padding(16.dp)) {
         ExposedDropdownMenuBox(
@@ -84,7 +87,10 @@ fun FruitSelector(modifier: Modifier = Modifier) {
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Choisissez un fruit") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults
+                        .TrailingIcon(expanded = expanded)
+                },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
@@ -98,7 +104,7 @@ fun FruitSelector(modifier: Modifier = Modifier) {
                     DropdownMenuItem(
                         text = { Text(fruit) },
                         onClick = {
-                            selectedFruit = fruit
+                            onFruitSelected(fruit)
                             expanded = false
                         }
                     )
@@ -116,10 +122,26 @@ fun FruitSelector(modifier: Modifier = Modifier) {
 
 @Composable
 fun App(modifier: Modifier = Modifier) {
+    var selectedFruit1 by rememberSaveable { mutableStateOf("") }
+    var selectedFruit2 by rememberSaveable { mutableStateOf("") }
+
     Column(modifier = modifier) {
         TextLengthCounter()
         Spacer(modifier = Modifier.height(100.dp))
-        FruitSelector()
+        FruitSelector(
+            fruits = listOf("Pomme", "Banane", "Orange", "Fraise", "Kiwi"),
+            selectedFruit = selectedFruit1,
+            onFruitSelected = { fruit -> selectedFruit1 = fruit }
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        FruitSelector(
+            fruits = listOf("Poire", "Mangue", "Orange", "Bleuet", "Pamplemousse"),
+            selectedFruit = selectedFruit2,
+            onFruitSelected = { fruit -> selectedFruit2 = fruit }
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text("Fruit sélectionné 1 : ${selectedFruit1 ?: "Aucun" }")
+        Text("Fruit sélectionné 2 : ${selectedFruit2 ?: "Aucun" }")
     }
 }
 
@@ -132,13 +154,13 @@ fun TextLengthCounterPreview() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FruitSelectorPreview() {
-    ExemplesEntreesTheme {
-        FruitSelector()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FruitSelectorPreview() {
+//    ExemplesEntreesTheme {
+//        FruitSelector(fruits = listOf("Pomme", "Banane", "Orange", "Fraise", "Kiwi"),)
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable
